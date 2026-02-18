@@ -1,8 +1,8 @@
 // 管理路由
 
 import 'package:flutter/material.dart';
-import 'package:hm_shop/pages/main/index.dart';
-import 'package:hm_shop/pages/login/index.dart';
+import 'package:hm_shop/pages/Main/index.dart';
+import 'package:hm_shop/pages/Login/index.dart';
 
 Widget getRootWidget( ) {
   return MaterialApp(
