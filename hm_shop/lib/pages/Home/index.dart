@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hm_shop/components/Home/HmCategory.dart';
+import 'package:hm_shop/components/Home/HmHot.dart';
+import 'package:hm_shop/components/Home/HmMoreList.dart';
+import 'package:hm_shop/components/Home/HmSlider.dart';
+import 'package:hm_shop/components/Home/HmSuggestion.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key? key}) : super(key: key);
@@ -8,10 +13,49 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  // 获取滚动容器的内容
+  List<Widget> _getScrollChildren() {
+    return [
+      // 包裹普通widget 的slivert 家族的内容
+      SliverToBoxAdapter(child: HmSlider()),
+      // 间距
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      // SliverGrid 和 SliverList 只能纵向排列
+      // 横向布局，使用 ListView
+      SliverToBoxAdapter(child: HmCategory()),
+      // 间距
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      // 推荐
+      SliverToBoxAdapter(child: HmSuggestion()),
+      // 间距
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      SliverToBoxAdapter(
+        // Flex 可以进行比例的分配
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Flex(
+            direction: Axis.horizontal,
+            children: [
+              // 爆品
+              Expanded(child: HmHot()),
+              // 间距
+              SizedBox(width: 10),
+              // 爆品
+              Expanded(child: HmHot()),
+            ],
+          ),
+        ),
+      ),
+      // 间距
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      // 无限滚动列表
+      HmMoreList(),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('首页'),
-    );
+    // Sliver 家族
+    return CustomScrollView(slivers: _getScrollChildren());
   }
 }
