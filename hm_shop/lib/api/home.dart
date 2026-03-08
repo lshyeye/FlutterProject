@@ -13,3 +13,14 @@ Future<List<BannerItem>> getBannerListAPI() async {
   }).toList();
   return tt;
 }
+
+// 获取分类列表
+Future<List<CategoryItem>> getCategoryListAPI() async {
+  // dioRequest 获取一个 dynamic
+  final tt = ((await dioRequest.get(HttpConstants.CATEGORY_LIST)) as List).map((
+    item,
+  ) {
+    return CategoryItem.fromJson(item as Map<String, dynamic>);
+  }).toList();
+  return tt;
+}
