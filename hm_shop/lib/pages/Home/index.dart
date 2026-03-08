@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hm_shop/api/home.dart';
 import 'package:hm_shop/components/Home/HmCategory.dart';
 import 'package:hm_shop/components/Home/HmHot.dart';
 import 'package:hm_shop/components/Home/HmMoreList.dart';
@@ -15,19 +16,19 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   // 轮播图的 3条数据
-  final List<BannerItem> _bannerList = [
-    BannerItem(
-      id: '1',
-      imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/1.jpg',
-    ),
-    BannerItem(
-      id: '2',
-      imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/2.jpg',
-    ),
-    BannerItem(
-      id: '3',
-      imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/3.jpg',
-    ),
+  List<BannerItem> _bannerList = [
+    // BannerItem(
+    //   id: '1',
+    //   imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/1.jpg',
+    // ),
+    // BannerItem(
+    //   id: '2',
+    //   imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/2.jpg',
+    // ),
+    // BannerItem(
+    //   id: '3',
+    //   imgUrl: 'https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/3.jpg',
+    // ),
   ];
   // https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/1.jpg
   // https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/2.jpg
@@ -71,6 +72,18 @@ class _HomeViewState extends State<HomeView> {
       // 无限滚动列表
       HmMoreList(),
     ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 初始化轮播图数据
+    _getBannerList();
+  }
+
+  void _getBannerList() async {
+    _bannerList = await getBannerListAPI();
+    setState(() {});
   }
 
   @override
