@@ -43,3 +43,95 @@ class CategoryItem {
     );
   }
 }
+
+// 特惠推荐相关类型, 接口的层级数据结构
+class GoodsItem {
+  String? id;
+  String? name;
+  String? desc;
+  String? price;
+  String? picture;
+  int? orderNum;
+  GoodsItem({
+    required this.id,
+    required this.name,
+    this.desc,
+    required this.price,
+    required this.picture,
+    required this.orderNum,
+  });
+  factory GoodsItem.fromJson(Map<String, dynamic> json) {
+    return GoodsItem(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      desc: json['desc'],
+      price: json['price'] ?? '',
+      picture: json['picture'] ?? '',
+      orderNum: json['orderNum'] as int?,
+    );
+  }
+}
+
+class GoodsItems {
+  int? counts;
+  int? pageSize;
+  int? pages;
+  int? page;
+  List<GoodsItem>? items;
+  GoodsItems({
+    required this.counts,
+    required this.pageSize,
+    required this.pages,
+    required this.page,
+    this.items,
+  });
+  factory GoodsItems.fromJson(Map<String, dynamic> json) {
+    return GoodsItems(
+      counts: json['counts'] as int?,
+      pageSize: json['pageSize'] as int?,
+      pages: json['pages'] as int?,
+      page: json['page'] as int?,
+      items: json['items'] != null
+          ? (json['items'] as List)
+                .map((item) => GoodsItem.fromJson(item as Map<String, dynamic>))
+                .toList()
+          : null,
+    );
+  }
+}
+
+class SubType {
+  String? id;
+  String? title;
+  GoodsItems? goodsItems;
+  SubType({required this.id, required this.title, this.goodsItems});
+  factory SubType.fromJson(Map<String, dynamic> json) {
+    return SubType(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      goodsItems: json['goodsItems'] != null
+          ? GoodsItems.fromJson(json['goodsItems'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+class SpecialReCommendResult {
+  String? id;
+  String? title;
+  List<SubType>? subTypes;
+  SpecialReCommendResult({
+    required this.id,
+    required this.title,
+    required this.subTypes,
+  });
+  factory SpecialReCommendResult.fromJson(Map<String, dynamic> json) {
+    return SpecialReCommendResult(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      subTypes: (json['subTypes'] as List ?? [])
+          .map((item) => SubType.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}

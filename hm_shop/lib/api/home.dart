@@ -24,3 +24,9 @@ Future<List<CategoryItem>> getCategoryListAPI() async {
   }).toList();
   return tt;
 }
+
+// 获取特惠推荐 返回的是对象
+Future<SpecialReCommendResult> getProductListAPI() async {
+
+  return SpecialReCommendResult.fromJson(await dioRequest.get(HttpConstants.PRODUCT_LIST));
+}
