@@ -71,7 +71,10 @@ class _HmSuggestionState extends State<HmSuggestion> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              // 图片加载失败时，执行这个函数，执行替换的静态资源
+              list[index].picture ?? '',
+              width: 100,
+              height: 140,
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Image.asset(
                   'lib/assets/home_cmd_inner.png',
@@ -80,10 +83,6 @@ class _HmSuggestionState extends State<HmSuggestion> {
                   fit: BoxFit.cover,
                 );
               },
-              list[index].picture ?? '',
-              width: 100,
-              height: 140,
-              fit: BoxFit.cover,
             ),
           ),
           SizedBox(height: 10),
@@ -94,7 +93,7 @@ class _HmSuggestionState extends State<HmSuggestion> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              "￥${list[index].price ?? ''}" ?? '',
+              "￥${list[index].price ?? ''}",
               style: TextStyle(
                 fontSize: 14,
                 color: const Color.fromARGB(255, 86, 24, 21),
