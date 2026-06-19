@@ -5,6 +5,7 @@ import 'package:hm_shop/components/Home/HmHot.dart';
 import 'package:hm_shop/components/Home/HmMoreList.dart';
 import 'package:hm_shop/components/Home/HmSlider.dart';
 import 'package:hm_shop/components/Home/HmSuggestion.dart';
+import 'package:hm_shop/utils/ToastUtils.dart';
 import 'package:hm_shop/viewmodels/home.dart';
 
 class HomeView extends StatefulWidget {
@@ -109,19 +110,29 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    // 初始化轮播图数据
-    _getBannerList();
-    // 初始化分类列表数据
-    _getCategoryList();
-    // 初始化特惠推荐数据
-    _getProductList();
-    // 初始化热门推荐数据
-    _getInVogueList();
-    // 初始化一站买全数据
-    _getOneStopList();
-    _getRecommendList();
-    // 监听滚动事件
+    // // 初始化轮播图数据
+    // _getBannerList();
+    // // 初始化分类列表数据
+    // _getCategoryList();
+    // // 初始化特惠推荐数据
+    // _getProductList();
+    // // 初始化热门推荐数据
+    // _getInVogueList();
+    // // 初始化一站买全数据
+    // _getOneStopList();
+    // _getRecommendList();
+    // // 监听滚动事件
     _registerEvent();
+
+    // 初始化的时候触发下拉刷新组件
+    Future.microtask(() {
+      _paddingTop = 100;
+      setState(() {});
+      _key.currentState?.show();
+    });
+    // 刷新
+    // initState ——> Build ——> 下拉刷新组件 ——> 刷新数据
+    // Future.microtask
   }
 
   void _registerEvent() {
@@ -130,7 +141,8 @@ class _HomeViewState extends State<HomeView> {
       // print('滚动啦${_controller.position.pixels}');
       // 滚动到最底部
       // _controller.position.pixels 滚动距离， _controller.position.maxScrollExtent 最大滚动距离
-      if (_controller.position.pixels >= (_controller.position.maxScrollExtent - 50) ) {
+      if (_controller.position.pixels >=
+          (_controller.position.maxScrollExtent - 50)) {
         // 加载下一页更多数据
         _getRecommendList();
         // print('到底了');
@@ -139,54 +151,88 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // 获取轮播图列表
-  void _getBannerList() async {
+  Future<void> _getBannerList() async {
     _bannerList = await getBannerListAPI();
-    setState(() {});
+    
   }
 
   // 获取分类列表
-  void _getCategoryList() async {
+  Future<void> _getCategoryList() async {
     _categoryList = await getCategoryListAPI();
-    setState(() {});
+    
   }
 
   // 获取特惠推荐数据
-  void _getProductList() async {
+  Future<void> _getProductList() async {
     _productList = await getProductListAPI();
-    setState(() {});
+    
   }
 
   // 获取热门推荐数据
-  void _getInVogueList() async {
+  Future<void> _getInVogueList() async {
     _inVogueResult = await getInVogueListAPI();
-    setState(() {});
+    
   }
 
   // 获取一站买全数据
-  void _getOneStopList() async {
+  Future<void> _getOneStopList() async {
     _oneStopResult = await getOneStopListAPI();
+   
+  }
+
+  Future<void> _onRefresh() async {
+    _page = 1;
+    _isLoading = false;
+    _hasMore = true;
+    await _getBannerList();
+    // 初始化分类列表数据
+    await _getCategoryList();
+    // 初始化特惠推荐数据
+    await _getProductList();
+    // 初始化热门推荐数据
+    await _getInVogueList();
+    // 初始化一站买全数据
+    await _getOneStopList();
+    await _getRecommendList();
+    // 提示  showSnackBar 展示消息对象
+    ToastUtils.showToast(context, '刷新成功');
+    _paddingTop = 0;
     setState(() {});
   }
 
   final ScrollController _controller = ScrollController();
+
+  // GLobalKey 是一个方法可以创建一个key 绑定到 Widget 上，控制 Widget 的状态
+  final GlobalKey<RefreshIndicatorState> _key =
+      GlobalKey<RefreshIndicatorState>();
+      double _paddingTop = 0;
+
   @override
   Widget build(BuildContext context) {
     // Sliver 家族
-    return CustomScrollView(
-      // 绑定滚动控制器，监听滚动事件
-      controller: _controller,
-      slivers: _getScrollChildren(),
+    return RefreshIndicator(
+      key: _key, // key 绑定到 对应的 Widget 上，控制 Widget 的状态
+      onRefresh: _onRefresh,
+      child: AnimatedContainer(
+        padding: EdgeInsets.only(top: _paddingTop),
+        duration: Duration(milliseconds: 300),
+        child: CustomScrollView(
+          // 绑定滚动控制器，监听滚动事件
+          controller: _controller,
+          slivers: _getScrollChildren(),
+        ),
+      ),
     );
   }
 
   // 页码 10,2*10,3*10
-  int _page=1;
-  bool _isLoading= false; // 当前是否正在加载状态
+  int _page = 1;
+  bool _isLoading = false; // 当前是否正在加载状态
   bool _hasMore = true; // 是否还有下一页
   // 获取推荐列表
-  void _getRecommendList() async {
+  Future<void> _getRecommendList() async {
     // 如果没有下一页或者正在请求
-    if(_isLoading || !_hasMore ) {
+    if (_isLoading || !_hasMore) {
       return;
     }
     _isLoading = true;
@@ -197,9 +243,9 @@ class _HomeViewState extends State<HomeView> {
     setState(() {});
     // 我要10条，你给10条，接着认为还有下一页
     // 我要10条，你给9条，就没有下一页
-    if(_recommendList.length < requestLimit) {
+    if (_recommendList.length < requestLimit) {
       _hasMore = false;
-      return ;
+      return;
     }
     _page++;
   }
