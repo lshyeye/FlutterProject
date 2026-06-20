@@ -149,7 +149,7 @@ class GoodDetailItem extends GoodsItem {
     required this.payCount,
   }) : super(desc: "");
   // 转化方法
-  factory GoodDetailItem.formJSON(Map<String, dynamic> json) {
+  factory GoodDetailItem.fromJson(Map<String, dynamic> json) {
     return GoodDetailItem(
       id: json["id"]?.toString() ?? "",
       name: json["name"]?.toString() ?? "",
@@ -157,6 +157,35 @@ class GoodDetailItem extends GoodsItem {
       picture: json["picture"]?.toString() ?? "",
       orderNum: int.tryParse(json["orderNum"]?.toString() ?? "0") ?? 0,
       payCount: int.tryParse(json["payCount"]?.toString() ?? "0") ?? 0,
+    );
+  }
+}
+
+
+class GoodsDetailsItems {
+  int? counts;
+  int? pageSize;
+  int? pages;
+  int? page;
+  List<GoodDetailItem>? items;
+  GoodsDetailsItems({
+    required this.counts,
+    required this.pageSize,
+    required this.pages,
+    required this.page,
+    this.items,
+  });
+  factory GoodsDetailsItems.fromJson(Map<String, dynamic> json) {
+    return GoodsDetailsItems(
+      counts: json['counts'] as int?,
+      pageSize: json['pageSize'] as int?,
+      pages: json['pages'] as int?,
+      page: json['page'] as int?,
+      items: json['items'] != null
+          ? (json['items'] as List)
+                .map((item) => GoodDetailItem.fromJson(item as Map<String, dynamic>))
+                .toList()
+          : null,
     );
   }
 }
